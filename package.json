@@ -1,0 +1,18 @@
+{
+  "name": "m2b",
+  "version": "1.0.0",
+  "description": "Random personal crossposter from Mastodon to Bluesky.",
+  "main": "app.mjs",
+  "module": "true",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "beeps <hi@berly.kim>",
+  "license": "MIT",
+  "dependencies": {
+    "@atproto/api": "^0.12.5",
+    "dotenv": "^16.4.5",
+    "html-to-text": "^9.0.5"
+  }
+}
