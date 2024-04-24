@@ -33,5 +33,5 @@ docker build -t m2b .
 ### Run it with docker
 
 ```sh
-docker run --name m2b -d m2b
+docker run --restart unless-stopped --name m2b -d m2b
 ```
