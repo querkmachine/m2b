@@ -47,9 +47,13 @@ class Crossposter {
   }
 
   formatPost(post) {
-    // Strip HTML, deencode HTML entities, try and preserve line breaks and
+    // If there's a summary (content warning) attached, use that in place of
+    // the post's actual content.
+    let postContent = post.object.summary ?? post.object.content;
+
+    // Strip HTML, unencode HTML entities, try and preserve line breaks and
     // paragraphs.
-    let postContent = convert(post.object.content, {
+    postContent = convert(postContent, {
       wordwrap: false,
       selectors: [
         {
@@ -65,7 +69,6 @@ class Crossposter {
     // We're going to append a 48 character URL to the end of each one (plus an
     // ellipsis and a space). Bluesky's character limit is 300, so posts can be
     // a maximum of 250 characters before being cut off.
-    // https://chitter.xyz/@batbeeps/112317307773941037
     if (postContent.length > 250) {
       postContent = postContent.substring(0, 250) + "…";
     }
