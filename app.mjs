@@ -106,12 +106,23 @@ class Crossposter {
     console.log(">>> Checking for new posts on Mastodon...");
 
     const userUrlPrefix = `${process.env.MASTODON_INSTANCE}/users/${process.env.MASTODON_USERNAME}`;
+    let posts = [];
+
     // Query the user's ActivityPub outbox for the latest posts by a user.
     // This bypasses the Mastodon API in a slightly dodge way, but it saves us
     // first having to query for the internal user ID. 🤷
-    const response = await fetch(`${userUrlPrefix}/outbox?page=true`);
-    const data = await response.json();
-    let posts = data?.orderedItems;
+
+    try {
+      const response = await fetch(`${userUrlPrefix}/outbox?page=true`);
+      const data = await response.json();
+      posts = data?.orderedItems;
+    } catch (err) {
+      console.error(">>> Mastodon request failed", err);
+    }
+
+    if (!posts) {
+      return;
+    }
 
     posts = posts
       // Only act upon creations of the "Note" type (not edits or other types).
@@ -138,11 +149,15 @@ class Crossposter {
         highestPostId = postId;
       }
 
-      if (postId > this.lastPostId) {
+      if (postId > this.lastPostId && this.lastPostId !== 0) {
         console.log(`>>> Found new post: ${postId}`);
 
-        const postText = this.formatPost(post);
-        this.postToBluesky(postText);
+        try {
+          const postText = this.formatPost(post);
+          this.postToBluesky(postText);
+        } catch (err) {
+          console.error(">>> Posting to Bluesky failed", err);
+        }
       }
     });
 
